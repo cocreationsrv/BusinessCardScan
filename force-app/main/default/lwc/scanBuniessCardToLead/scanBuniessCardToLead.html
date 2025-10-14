@@ -1,0 +1,151 @@
+<template>
+  <article class="slds-card">
+    <div class="slds-card__header slds-grid">
+      <header class="slds-media slds-media_center slds-has-flexi-truncate slds-p-horizontal_small">
+        <div class="slds-media__figure">
+          <span
+            class="slds-icon_container slds-icon-standard-account"
+            title="account"
+          >
+            <lightning-icon
+              icon-name="action:new_lead"
+              alternative-text="new_lead"
+              title="リード追加"
+            ></lightning-icon>
+            <span class="slds-assistive-text">リード</span>
+          </span>
+        </div>
+        <div class="slds-media__body">
+          <h2 class="slds-card__header-title">
+            <a
+              href="#"
+              class="slds-card__header-link slds-truncate"
+              title="リード"
+            >
+              <span>リード</span>
+            </a>
+          </h2>
+        </div>
+        <div class="slds-no-flex">
+          <lightning-input
+            type="file"
+            accept=".heic, image/*;capture=camera"
+            label="名刺アップロード"
+            onchange={handle_UploadImage}
+          ></lightning-input>
+        </div>
+      </header>
+    </div>
+    <div class="slds-card__body slds-card__body_inner">
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="name"
+            value={in_name}
+            onchange={handle_Name_Change}
+            label="名前"
+          ></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="companyNames"
+            value={in_company_names}
+            onchange={handle_CompanyNames_Change}
+            label="会社名"
+          ></lightning-input>
+        </div>
+      </div>
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="departments"
+            value={in_departments}
+            onchange={handle_Departments_Change}
+            label="部署"
+          ></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="jt"
+            value={in_jt}
+            onchange={handle_Jt_Change}
+            label="職位"
+          ></lightning-input>
+        </div>
+      </div>
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="address"
+            value={in_address}
+            onchange={handle_Address_Change}
+            label="住所"
+          ></lightning-input>
+        </div>
+      </div>
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="websites"
+            value={in_websites}
+            onchange={handle_Websites_Change}
+            label="ウエブサイトURL"
+          ></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="email"
+            value={in_email}
+            onchange={handle_Email_Change}
+            label="メール"
+          ></lightning-input>
+        </div>
+      </div>
+      <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_x-small">
+          <lightning-input
+            type="text"
+            name="workPhone"
+            value={in_work_phone}
+            onchange={handle_WorkPhone_Change}
+            label="電話"
+          ></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-p-horizontal_small slds-m-bottom_medium">
+          <lightning-input
+            type="text"
+            name="fax"
+            value={in_fax}
+            onchange={handle_Fax_Change}
+            label="ファクス"
+          ></lightning-input>
+        </div>
+      </div>
+    </div>
+    <div class="slds-card__footer">
+      <div class="demo-only"
+           style="height: 3rem; position: relative; display: flex; justify-content: center; align-items: center;">
+        <template lwc:if={isLoading}>
+          <div class="slds-spinner slds-spinner_small slds-spinner_inline">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+          </div>
+        </template>
+        <template lwc:else>
+          <lightning-button
+            label="登録"
+            class="slds-button_neutral"
+            onclick={handle_insertData}
+          ></lightning-button>
+        </template>
+      </div>
+    </div>
+  </article>
+</template>
