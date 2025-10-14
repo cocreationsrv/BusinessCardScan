@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>サーバー接続設定</label>
+    <protected>false</protected>
+    <values>
+        <field>ConstText2__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ConstText3__c</field>
+        <value xsi:type="xsd:string">10</value>
+    </values>
+    <values>
+        <field>ConstText4__c</field>
+        <value xsi:type="xsd:string">2</value>
+    </values>
+    <values>
+        <field>ConstText5__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ConstText6__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ConstText__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Explanation__c</field>
+        <value xsi:type="xsd:string">設定値（テキスト）：エンドポイントURL
+設定値（テキスト）２：APIキー
+設定値（テキスト）３：再請求回数
+設定値（テキスト）４：請求間隔時間</value>
+    </values>
+    <values>
+        <field>ValidFlg__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+</CustomMetadata>
