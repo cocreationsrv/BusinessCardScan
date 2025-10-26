@@ -14,11 +14,11 @@ public with sharing class ProcessCameraController {
     /** 
      * @description トライ回数
      */
-    Integer tryRound;
+    Integer tryRound = 10;
     /** 
      * @description 待ち時間
      */
-    Long waitTime;
+    Long waitTime = 2;
 
     /**
      * @description 主な処理
@@ -28,55 +28,76 @@ public with sharing class ProcessCameraController {
      */
     public List<Map<String,String>> invoke(String path, String base64) {
 
-        // カスタムメタデータから設定取得
-        List<CardScanSettings__mdt> configList;
-        try{
-            configList = [SELECT ConstText__c, ConstText2__c, ConstText3__c, ConstText4__c
-                                FROM CardScanSettings__mdt
-                                WHERE ValidFlg__c = true
-                                AND DeveloperName = 'serverSettings'
-                                WITH SECURITY_ENFORCED];
-        } catch(NoAccessException e) {
-            System.debug(LoggingLevel.ERROR, e.getMessage());
-            // オブジェクトに参照権限がない場合の処理
-            throw e;
+        // サービス利用フラグ
+        Boolean useServiceProcess = false;
+
+        // カスタマ設定取得
+        List<cocr__BSConfig__c> appSetting = [SELECT id,name,cocr__UseAzureAI__c,cocr__ServiceURL__c,cocr__APIKey__c 
+                                FROM cocr__BSConfig__c];
+        if (appSetting == null || appSetting.size() == 0) {
+           useServiceProcess = false;
+        } else {
+            if (appSetting[0].cocr__UseAzureAI__c == false) {
+                useServiceProcess = false;
+            } else {
+                if (String.isBlank(appSetting[0].cocr__ServiceURL__c) || String.isBlank(appSetting[0].cocr__APIKey__c)) {
+                    useServiceProcess = false;
+                } else {
+                    useServiceProcess = true;
+                    endPoint = appSetting[0].cocr__ServiceURL__c;
+                    subscriptionKey = appSetting[0].cocr__APIKey__c;
+                }
+            } 
         }
 
-        if (!configList.isEmpty()) {
-            endPoint = String.isBlank(configList[0].ConstText__c) ? 'https://' : configList[0].ConstText__c;
-            subscriptionKey = String.isBlank(configList[0].ConstText2__c) ? 'abc' : configList[0].ConstText2__c;
-
-            if (String.isBlank(configList[0].ConstText3__c)) {
-                tryRound = 10;
-            } else {
-                tryRound = Integer.valueOf(configList[0].ConstText3__c);
+        // サービス利用する場合
+        if(useServiceProcess) {
+            // カスタムメタデータから設定取得
+            List<CardScanSettings__mdt> configList;
+            try{
+                configList = [SELECT ConstText__c, ConstText2__c, ConstText3__c, ConstText4__c
+                                    FROM CardScanSettings__mdt
+                                    WHERE ValidFlg__c = true
+                                    AND DeveloperName = 'serverSettings'
+                                    WITH SECURITY_ENFORCED];
+            } catch(NoAccessException e) {
+                System.debug(LoggingLevel.ERROR, e.getMessage());
+                // オブジェクトに参照権限がない場合の処理
+                throw e;
             }
 
-            if (String.isBlank(configList[0].ConstText4__c)) {
-                waitTime = 2;
-            } else {
-                waitTime = Long.valueOf(configList[0].ConstText4__c);
+            if (!configList.isEmpty()) {
+                if (String.isNotBlank(configList[0].ConstText3__c)) {
+                    tryRound = Integer.valueOf(configList[0].ConstText3__c);
+                }
+
+                if (String.isNotBlank(configList[0].ConstText4__c)) {
+                    waitTime = Long.valueOf(configList[0].ConstText4__c);
+                }
+            } 
+
+            //system.debug('-----path:'+ path + '; base64:'+ base64);
+
+            if (String.isBlank(path) && String.isBlank(base64)) {
+                return null;
             }
+
+            //String imageBase64 = base64.split(',').get(1);
+
+            Map<String,String> picMap = new Map<String,String>();
+            if (!String.isBlank(path)) {
+                picMap.put('urlSource', path);
+            } else {
+                picMap.put('base64Source', base64);
+            }
+
+            return httpClient(picMap);
         } else {
-            return null;
+            // サービス利用しない場合
+            List<Map<String,String>> rtnList = new List<Map<String,String>>();
+            rtnList.add(new Map<String,String>{'LocalProcess' => 'true'});
+            return rtnList;
         }
-
-        //system.debug('-----path:'+ path + '; base64:'+ base64);
-
-         if (String.isBlank(path) && String.isBlank(base64)) {
-            return null;
-        }
-
-        //String imageBase64 = base64.split(',').get(1);
-
-        Map<String,String> picMap = new Map<String,String>();
-        if (!String.isBlank(path)) {
-            picMap.put('urlSource', path);
-        } else {
-            picMap.put('base64Source', base64);
-        }
-
-        return httpClient(picMap);
     }
 
     /**
@@ -274,6 +295,7 @@ public with sharing class ProcessCameraController {
      * @param faxOrPhone
      * @return string
      */
+    @TestVisible
     public String clearPrefix(String faxOrPhone) {
 
         faxOrPhone = faxOrPhone.replace(' ','');
@@ -339,6 +361,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description Result
      */
+    @TestVisible
     public class Result {
         /**
          * @description status
@@ -365,6 +388,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description AnalyzeResult
      */
+    @TestVisible
     public class AnalyzeResult {
         /**
          * @description apiVersion
@@ -390,22 +414,26 @@ public with sharing class ProcessCameraController {
          * @description pages
          * @return pages
          */
+        @TestVisible
         public List<Pages> pages{get; set;}
         /**
          * @description styles
          * @return styles
          */
+        @TestVisible
         public List<Style> styles{get; set;}
         /**
          * @description documents
          * @return documents
          */
+        @TestVisible
         public List<Document> documents{get; set;}
     }
 
     /**
      * @description Style
      */
+    @TestVisible
     public class Style {
         /**
          * @description documents
@@ -427,6 +455,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description Pages
      */
+    @TestVisible
     public class Pages {
         /**
          * @description pageNumber
@@ -468,6 +497,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description Words
      */
+    @TestVisible
     public class Words {
         /**
          * @description content
@@ -510,6 +540,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description Document
      */
+    @TestVisible
     public class Document {
         /**
          * @description docType

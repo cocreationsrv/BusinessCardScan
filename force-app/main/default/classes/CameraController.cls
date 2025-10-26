@@ -14,6 +14,8 @@ public with sharing class CameraController {
     final static String KEY_WEBSITES = 'websites';
     final static String KEY_COMPANYNAMES = 'companyNames';
 
+    // ローカル処理キー
+    final static String LOCAL = 'LocalProcess';
     /** 
      * @description file
      * @return file
@@ -27,7 +29,17 @@ public with sharing class CameraController {
      * @description fileSaved
      * @return fileSaved
      */
-    public boolean fileSaved {get;set;}
+    //public boolean fileSaved {get;set;}
+
+    @AuraEnabled(cacheable=true)
+    public static Boolean isButtonVisible() {
+        // 現在のユーザーレベルのカスタム設定を取得
+        cocr__BSConfig__c config = cocr__BSConfig__c.getInstance();
+        if (config != null) {
+            return config.cocr__UseAzureAI__c;
+        }
+        return false; // ディフォルト非表示
+    }
 
     /**
      * @description 画像アップロード
@@ -47,6 +59,11 @@ public with sharing class CameraController {
             LeadInfoClass leadInfo = new LeadInfoClass();
 
             for(Map<String,String> item : resultList) {
+                // ローカル処理の場合の処理
+                if(item.containsKey(LOCAL)) {
+                    return 'local';
+                }
+                
                 //system.debug('==debug==item:' + item);
                 // 住所
                 if(item.containsKey(KEY_ADDRESS)) {
@@ -135,7 +152,7 @@ public with sharing class CameraController {
             }
 
             LeadInfoClass leadInfo = (LeadInfoClass)JSON.deserialize(leadJsonStr, LeadInfoClass.class);
-            system.debug('==debug==leadInfo:' + leadInfo);
+            //system.debug('==debug==leadInfo:' + leadInfo);
 
             Lead lead = new Lead(
                 LastName = leadInfo.name,
