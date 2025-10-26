@@ -28,9 +28,7 @@
     </values>
     <values>
         <field>Explanation__c</field>
-        <value xsi:type="xsd:string">設定値（テキスト）：エンドポイントURL
-設定値（テキスト）２：APIキー
-設定値（テキスト）３：再請求回数
+        <value xsi:type="xsd:string">設定値（テキスト）３：再請求回数
 設定値（テキスト）４：請求間隔時間</value>
     </values>
     <values>
