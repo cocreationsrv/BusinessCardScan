@@ -14,8 +14,6 @@ private class TestProcessCameraController {
         Profile p = [SELECT Id FROM Profile WHERE Name = :profileName];
         
         cocr__BSConfig__c config = new cocr__BSConfig__c(
-				cocr__APIKey__c = 'aaaa',
-            	cocr__ServiceURL__c = 'https://aaaa',
             	cocr__UseAzureAI__c = true,
             	SetupOwnerId = p.Id
         );
@@ -44,7 +42,6 @@ private class TestProcessCameraController {
             }
         }
 		
-        
         system.assertNotEquals(null, name,'');
         system.assertNotEquals(null, phone,'');
         system.assertNotEquals(null, company,'');
@@ -70,8 +67,6 @@ private class TestProcessCameraController {
         Profile p = [SELECT Id FROM Profile WHERE Name = :profileName];
         
         cocr__BSConfig__c config = new cocr__BSConfig__c(
-				cocr__APIKey__c = 'aaaa',
-            	cocr__ServiceURL__c = 'https://aaaa',
             	cocr__UseAzureAI__c = true,
             	SetupOwnerId = p.Id
         );
@@ -107,8 +102,6 @@ private class TestProcessCameraController {
         Profile p = [SELECT Id FROM Profile WHERE Name = :profileName];
         
         cocr__BSConfig__c config = new cocr__BSConfig__c(
-				cocr__APIKey__c = 'aaaa',
-            	cocr__ServiceURL__c = 'https://aaaa',
             	cocr__UseAzureAI__c = false,
             	SetupOwnerId = p.Id
         );
@@ -131,8 +124,6 @@ private class TestProcessCameraController {
         Profile p = [SELECT Id FROM Profile WHERE Name = :profileName];
         
         cocr__BSConfig__c config = new cocr__BSConfig__c(
-				cocr__APIKey__c = '',
-            	cocr__ServiceURL__c = '',
             	cocr__UseAzureAI__c = true,
             	SetupOwnerId = p.Id
         );
@@ -155,8 +146,6 @@ private class TestProcessCameraController {
         Profile p = [SELECT Id FROM Profile WHERE Name = :profileName];
         
         cocr__BSConfig__c config = new cocr__BSConfig__c(
-				cocr__APIKey__c = 'aaa',
-            	cocr__ServiceURL__c = 'aaa',
             	cocr__UseAzureAI__c = true,
             	SetupOwnerId = p.Id
         );
@@ -210,14 +199,17 @@ private class TestProcessCameraController {
 
         List<ProcessCameraController.Pages> pages = ar.pages;
         System.debug(pages.size());
-        // for(ProcessCameraController.Pages page : pages) {
-        //     System.debug(page.pageNumber);
-        //     System.debug(page.angle);
-        //     System.debug(page.width);
-        //     System.debug(page.height);
-        //     System.debug(page.unit);
-        //     System.debug(page.words);
-        // }
+        for(ProcessCameraController.Pages page : pages) {
+            System.debug(page.pageNumber);
+            System.debug(page.angle);
+            System.debug(page.width);
+            System.debug(page.height);
+            System.debug(page.unit);
+            List<ProcessCameraController.Words> words = page.words;
+            System.debug(words);
+            List<ProcessCameraController.Span> spans = page.spans;
+            System.debug(spans);
+        }
         
         List<ProcessCameraController.Style> styles = ar.styles;
         System.debug(styles.size());

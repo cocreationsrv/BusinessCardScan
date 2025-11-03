@@ -30,23 +30,24 @@ public with sharing class ProcessCameraController {
 
         // サービス利用フラグ
         Boolean useServiceProcess = false;
-
         // カスタマ設定取得
-        List<cocr__BSConfig__c> appSetting = [SELECT id,name,cocr__UseAzureAI__c,cocr__ServiceURL__c,cocr__APIKey__c 
-                                FROM cocr__BSConfig__c];
+        List<cocr__BSConfig__c> appSetting = new List<cocr__BSConfig__c>();
+        try{
+            // カスタマ設定取得
+            appSetting = Database.query('SELECT id,name,cocr__UseAzureAI__c FROM cocr__BSConfig__c', AccessLevel.USER_MODE);
+        } catch(NoAccessException e) {
+            System.debug(LoggingLevel.ERROR, e.getMessage());
+            // オブジェクトに参照権限がない場合の処理
+            throw e;
+        }
+
         if (appSetting == null || appSetting.size() == 0) {
            useServiceProcess = false;
         } else {
             if (appSetting[0].cocr__UseAzureAI__c == false) {
                 useServiceProcess = false;
             } else {
-                if (String.isBlank(appSetting[0].cocr__ServiceURL__c) || String.isBlank(appSetting[0].cocr__APIKey__c)) {
-                    useServiceProcess = false;
-                } else {
-                    useServiceProcess = true;
-                    endPoint = appSetting[0].cocr__ServiceURL__c;
-                    subscriptionKey = appSetting[0].cocr__APIKey__c;
-                }
+                useServiceProcess = true;
             } 
         }
 
@@ -67,6 +68,12 @@ public with sharing class ProcessCameraController {
             }
 
             if (!configList.isEmpty()) {
+                if (String.isNotBlank(configList[0].ConstText__c)) {
+                    endPoint = configList[0].ConstText__c;
+                }
+                if (String.isNotBlank(configList[0].ConstText2__c)) {
+                    subscriptionKey = configList[0].ConstText2__c;
+                }
                 if (String.isNotBlank(configList[0].ConstText3__c)) {
                     tryRound = Integer.valueOf(configList[0].ConstText3__c);
                 }
@@ -74,7 +81,7 @@ public with sharing class ProcessCameraController {
                 if (String.isNotBlank(configList[0].ConstText4__c)) {
                     waitTime = Long.valueOf(configList[0].ConstText4__c);
                 }
-            } 
+            }
 
             //system.debug('-----path:'+ path + '; base64:'+ base64);
 
@@ -486,11 +493,13 @@ public with sharing class ProcessCameraController {
          * @description words
          * @return words
          */
+        @TestVisible
         public List<Words> words{get; set;}
         /**
          * @description spans
          * @return spans
          */
+        @TestVisible
         public List<Span> spans{get; set;}
     }
 
@@ -524,6 +533,7 @@ public with sharing class ProcessCameraController {
     /**
      * @description Span
      */
+    @TestVisible
     public class Span {
         /**
          * @description offset
